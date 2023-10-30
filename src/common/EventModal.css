@@ -1,0 +1,30 @@
+.close-icon {
+    position: absolute;
+    right: 0.5rem;
+    top: 0.5rem;
+    cursor: pointer;
+  }
+  form {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  
+  .field-style {
+    display: flex;
+    flex-direction: column;
+  }
+  button {
+    color: white;
+    background-color: #002884;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    margin-bottom: 0.3rem;
+  }
+  input {
+    padding: 0.3rem;
+  }
+  
