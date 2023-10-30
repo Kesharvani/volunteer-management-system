@@ -6,15 +6,18 @@ import { addVolunteer, updateVolunteer } from "../features/volunteerSlice";
 import { useDispatch } from "react-redux";
 export default function VolunteerModal(props) {
   const dispatch = useDispatch();
-  const patient = props.patient ? props.patient : null;
-  const [newPatient, setNewPatient] = useState({
-    name: patient ? patient.name : "",
-    age: patient ? patient.age : "",
-    gender: patient ? patient.gender : "",
-    medicalHistory: patient ? patient.medicalHistory : "",
-    contact: patient ? patient.contact : "",
+  const volunteer = props.volunteer ? props.volunteer : null;
+  const [newVolunteer, setNewVolunteer] = useState({
+    name: volunteer ? volunteer.name : "",
+    contact: volunteer ? volunteer.contact : "",
+    skills: volunteer ? volunteer.skills : [],
+    availibility: volunteer ? volunteer.availibility : "",
+    areaOfInterest: volunteer ? volunteer.areaOfInterest : [],
   });
-
+  const [arrayData, setArrayData] = useState({
+    skills: "",
+    areaOfInterest: "",
+  });
   const [modalIsOpen, setIsOpen] = useState(false);
   // open modal
   function openModal() {
@@ -37,29 +40,52 @@ export default function VolunteerModal(props) {
       transform: "translate(-50%, -50%)",
     },
   };
-
+  // for all other handler except skills and area of interest
   const formChangeHandler = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
-    setNewPatient((prev) => ({ ...prev, [name]: value }));
+    setNewVolunteer((prev) => ({ ...prev, [name]: value }));
+  };
+  // for skills and area of interest
+  const skillChangeHandler = (e) => {
+    console.log("inside handler");
+    const { name, value } = e.target;
+    setArrayData((prev) => ({ ...prev, [name]: value }));
   };
 
   const submit = (e) => {
     e.preventDefault();
-    if (patient) {
+    if (volunteer) {
       dispatch(
-        updateVolunteer({ id: patient._id, updatedPatient: newPatient })
+        updateVolunteer({ id: volunteer._id, updatedPatient: newVolunteer })
       );
     } else {
-      dispatch(addVolunteer(newPatient));
+      dispatch(addVolunteer(newVolunteer));
     }
     closeModal();
+  };
+
+  // add skill handler
+  const addSkill = () => {
+    setNewVolunteer((prev) => ({
+      ...prev,
+      skills: [...prev.skills, arrayData.skills],
+    }));
+    setArrayData((prev) => ({ ...prev, skills: "" }));
+  };
+  // add area of interest handler
+  const addInterest = () => {
+    setNewVolunteer((prev) => ({
+      ...prev,
+      areaOfInterest: [...prev.areaOfInterest, arrayData.areaOfInterest],
+    }));
+    setArrayData((prev) => ({ ...prev, areaOfInterest: "" }));
   };
 
   return (
     <div>
       <button onClick={openModal}>
-        {patient ? "Update" : "Add"} Volunteer
+        {volunteer ? "Update" : "Add"} Volunteer
       </button>
       <Modal
         isOpen={modalIsOpen}
@@ -80,77 +106,77 @@ export default function VolunteerModal(props) {
               type="text"
               name="name"
               onChange={formChangeHandler}
-              value={newPatient.name}
+              value={newVolunteer.name}
               required
             />
           </div>
-          <div className="field-style">
-            <label htmlFor="age">Age:</label>
-            <input
-              type="number"
-              name="age"
-              onChange={formChangeHandler}
-              value={newPatient.age}
-              required
-            />
-          </div>
-          <fieldset>
-            <legend>Gender:</legend>
-            <label>
-              <input
-                type="radio"
-                name="gender"
-                value="male"
-                onChange={formChangeHandler}
-                checked={newPatient.gender === "male"}
-                required
-              />
-              Male
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="gender"
-                value="female"
-                onChange={formChangeHandler}
-                checked={newPatient.gender === "female"}
-              />
-              Female
-            </label>
-          </fieldset>
           <div className="field-style">
             <label htmlFor="contact">Contact</label>
             <input
               type="string"
               name="contact"
               onChange={formChangeHandler}
-              value={newPatient.contact}
+              value={newVolunteer.contact}
               required
             />
           </div>
           <div className="field-style">
+            <label htmlFor="skills">Skills</label>
+            <input
+              type="string"
+              name="skills"
+              onChange={skillChangeHandler}
+              value={arrayData.skills}
+            />
+            <button type="button" onClick={addSkill}>
+              Add Skill
+            </button>
+            <ul>
+              {newVolunteer?.skills?.map((skill, index) => (
+                <li key={index}>{skill}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="field-style">
+            <label htmlFor="skills">Area of interest</label>
+            <input
+              type="string"
+              name="areaOfInterest"
+              onChange={skillChangeHandler}
+              value={arrayData.areaOfInterest}
+            />
+            <button type="button" onClick={addInterest}>
+              Add Interest
+            </button>
+            <ul>
+              {newVolunteer?.areaOfInterest?.map((interest, index) => (
+                <li key={index}>{interest}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="field-style">
             <fieldset>
-              <legend>Is Medical History?</legend>
+              <legend>Availibility:</legend>
               <label>
                 <input
                   type="radio"
-                  name="medicalHistory"
+                  name="availibility"
                   value="true"
                   onChange={formChangeHandler}
-                  checked={newPatient.medicalHistory === "true"}
+                  checked={newVolunteer.availibility === "true"}
                   required
                 />
-                Yes
+                True
               </label>
               <label>
                 <input
                   type="radio"
-                  name="medicalHistory"
+                  name="availibility"
                   value="false"
                   onChange={formChangeHandler}
-                  checked={newPatient.medicalHistory === "false"}
+                  checked={newVolunteer.availibility === "false"}
                 />
-                No
+                False
               </label>
             </fieldset>
           </div>
