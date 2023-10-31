@@ -5,6 +5,7 @@ import Volunteer from "./pages/Volunteer";
 import Event from "./pages/Event";
 import VolunteerDetails from "./pages/VolunteerDetails";
 import EventDetails from "./pages/EventDetails";
+import Footer from "./common/Footer";
 function App() {
   const style = ({ isActive, isPending }) => {
     return {
@@ -43,6 +44,7 @@ function App() {
           <Route path="/event/:id" element={<EventDetails />} />
         </Routes>
       </div>
+      <Footer />
     </>
   );
 }

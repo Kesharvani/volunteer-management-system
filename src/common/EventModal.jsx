@@ -80,9 +80,7 @@ export default function EventModal(props) {
       numberOfVolunteerWithRole: updatedRoles,
     });
   };
-
   const specilizationItems = ["", "Pediatrics", "Surgery", "ICU"];
-  console.log(newEvent, "newEvent");
   return (
     <div>
       <button onClick={openModal}>{event ? "Update" : "Add"} event</button>

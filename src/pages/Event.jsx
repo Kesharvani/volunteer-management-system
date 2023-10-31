@@ -11,7 +11,6 @@ export default function Event() {
   useEffect(() => {
     if (status === "idle") dispatch(fetchEvent());
   }, [status, dispatch]);
-  console.log("event data", eventsData);
   return (
     <div>
       {status === "loading" && <div>Loading...</div>}

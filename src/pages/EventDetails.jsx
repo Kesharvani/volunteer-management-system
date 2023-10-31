@@ -13,7 +13,6 @@ export default function EventDetails() {
     dispatch(deleteEvent(id));
     navigate("/event");
   };
-  console.log("currentEvent", currentEvent);
   return (
     <div>
       <p>Event Name:{currentEvent?.name}</p>
