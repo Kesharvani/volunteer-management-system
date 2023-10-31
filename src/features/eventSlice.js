@@ -13,10 +13,10 @@ export const fetchEvent = createAsyncThunk("event/fetchEvent", async () => {
   return event.data.event;
 });
 
-export const addEvent = createAsyncThunk("event/addEvent", async (newWard) => {
+export const addEvent = createAsyncThunk("event/addEvent", async (newEvent) => {
   const event = await axios.post(
     "https://volunteer-management-system-assignment22.allahabad.repl.co/event",
-    newWard
+    newEvent
   );
   return event.data.event;
 });

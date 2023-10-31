@@ -8,12 +8,17 @@ import { useDispatch } from "react-redux";
 export default function EventModal(props) {
   const dispatch = useDispatch();
   const event = props.event ? props.event : null;
-  const [newWard, setNewWard] = useState({
-    wardNumber: event ? event.wardNumber : "",
-    capacity: event ? event.capacity : "",
-    specializations: event ? event.specializations : "",
+  const [newEvent, setNewEvent] = useState({
+    name: event ? event.name : "",
+    date: event ? event.date : "",
+    location: event ? event.location : "",
+    description: event ? event.description : "",
+    numberOfVolunteerWithRole: event
+      ? event.numberOfVolunteerWithRole
+      : [
+          { roleName: "", requiredVolunteers: "" }, // Initial role field
+        ],
   });
-
   const [modalIsOpen, setIsOpen] = useState(false);
   // open modal
   function openModal() {
@@ -37,23 +42,47 @@ export default function EventModal(props) {
     },
   };
 
-  const formChangeHandler = (e) => {
+  const formChangeHandler = (e, index) => {
     e.preventDefault();
     const { name, value } = e.target;
-    setNewWard((prev) => ({ ...prev, [name]: value }));
+
+    const updatedRoles = [...newEvent.numberOfVolunteerWithRole];
+    updatedRoles[index] = { ...updatedRoles[index], [name]: value };
+    setNewEvent({ ...newEvent, numberOfVolunteerWithRole: updatedRoles });
   };
 
   const submit = (e) => {
     e.preventDefault();
     if (event) {
-      dispatch(updateEvent({ id: event?._id, updatedWard: newWard }));
+      dispatch(updateEvent({ id: event?._id, updatedWard: newEvent }));
     } else {
-      dispatch(addEvent(newWard));
+      dispatch(addEvent(newEvent));
     }
     closeModal();
   };
 
+  const addRoleField = () => {
+    setNewEvent({
+      ...newEvent,
+      numberOfVolunteerWithRole: [
+        ...newEvent.numberOfVolunteerWithRole,
+        { roleName: "", requiredVolunteers: "" },
+      ],
+    });
+  };
+
+  const removeRoleField = (index) => {
+    const updatedRoles = newEvent.numberOfVolunteerWithRole.filter(
+      (role, i) => i !== index
+    );
+    setNewEvent({
+      ...newEvent,
+      numberOfVolunteerWithRole: updatedRoles,
+    });
+  };
+
   const specilizationItems = ["", "Pediatrics", "Surgery", "ICU"];
+  console.log(newEvent, "newEvent");
   return (
     <div>
       <button onClick={openModal}>{event ? "Update" : "Add"} event</button>
@@ -71,39 +100,85 @@ export default function EventModal(props) {
         />
         <form onSubmit={submit}>
           <div className="field-style">
-            <label htmlFor="wardNumber">event Number:</label>
+            <label htmlFor="name">Event Name:</label>
             <input
-              type="number"
-              name="wardNumber"
-              onChange={formChangeHandler}
-              value={newWard.wardNumber}
+              type="string"
+              name="name"
+              onChange={(e) =>
+                setNewEvent({ ...newEvent, name: e.target.value })
+              }
+              value={newEvent.name}
               required
             />
           </div>
           <div className="field-style">
-            <label htmlFor="capacity">Capacity:</label>
+            <label htmlFor="date">Date:</label>
             <input
-              type="number"
-              name="capacity"
-              onChange={formChangeHandler}
-              value={newWard.capacity}
+              type="date"
+              name="date"
+              onChange={(e) =>
+                setNewEvent({ ...newEvent, date: e.target.value })
+              }
+              value={newEvent.date}
               required
             />
           </div>
           <div className="field-style">
-            <label htmlFor="specializations">Specializations</label>
-            <select
-              id="specializations"
-              name="specializations"
-              onChange={formChangeHandler}
-              value={newWard.specializations}
-            >
-              {specilizationItems.map((specialization) => (
-                <option key={specialization} value={specialization}>
-                  {specialization}
-                </option>
-              ))}
-            </select>
+            <label htmlFor="location">Location:</label>
+            <input
+              type="string"
+              name="location"
+              onChange={(e) =>
+                setNewEvent({ ...newEvent, location: e.target.value })
+              }
+              value={newEvent.location}
+              required
+            />
+          </div>
+          <div className="field-style">
+            <label htmlFor="description">Description:</label>
+            <input
+              type="string"
+              name="description"
+              onChange={(e) =>
+                setNewEvent({ ...newEvent, description: e.target.value })
+              }
+              value={newEvent.description}
+              required
+            />
+          </div>
+
+          <div className="field-style">
+            <label htmlFor="roles">Roles:</label>
+            {newEvent?.numberOfVolunteerWithRole?.map((role, index) => (
+              <div key={index}>
+                <label htmlFor={`roleName${index}`}>Role Name:</label>
+                <input
+                  type="text"
+                  id={`roleName${index}`}
+                  name="roleName"
+                  value={role.roleName}
+                  onChange={(e) => formChangeHandler(e, index)}
+                />
+                <label htmlFor={`requiredVolunteers${index}`}>
+                  Required Volunteers:
+                </label>
+                <input
+                  type="number"
+                  id={`requiredVolunteers${index}`}
+                  name="requiredVolunteers"
+                  value={role.requiredVolunteers}
+                  onChange={(e) => formChangeHandler(e, index)}
+                />
+                <button type="button" onClick={() => removeRoleField(index)}>
+                  Remove Role
+                </button>
+              </div>
+            ))}
+
+            <button type="button" onClick={addRoleField}>
+              Add Role
+            </button>
           </div>
           <button type="submit">Submit</button>
         </form>
